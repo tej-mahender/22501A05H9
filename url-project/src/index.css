@@ -1,0 +1,66 @@
+/* index.css */
+
+/* === CSS Reset & Box Sizing === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* === HTML & Body Styles === */
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  background-color: #f5f5f5; /* Light gray background */
+  color: rgba(0, 0, 0, 0.87); /* MUI's default text color */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === Scrollbar Styling (optional, for consistent UX) === */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* === App Root Container === */
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* === MUI-specific Customizations === */
+
+/* Remove button outlines in Firefox */
+button:focus {
+  outline: none;
+}
+
+/* Optional: customize MUI button ripple effect */
+.MuiButton-root:active::after {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Optional: override default MUI container padding */
+.MuiContainer-root {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Optional: transition for theme-based background changes */
+body,
+.MuiPaper-root {
+  transition: background-color 0.3s ease;
+}

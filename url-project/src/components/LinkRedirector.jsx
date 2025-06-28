@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+
+// Helper to ensure the URL is valid (adds https:// if missing)
+const ensureProtocol = (url) => {
+  if (!/^https?:\/\//i.test(url)) return 'https://' + url;
+  return url;
+};
 
 export default function LinkRedirector() {
   const { shortCode } = useParams();
@@ -16,13 +22,20 @@ export default function LinkRedirector() {
     }
 
     const now = new Date();
-    if (new Date(matchedLink.expiresAt) < now) {
+    const expiresAt = new Date(matchedLink.expiresAt);
+
+    if (expiresAt < now) {
       setError("This short link has expired.");
       return;
     }
 
-    // Get coarse location (optional, fallback to 'Unknown')
-    fetch("https://ipinfo.io/json?token=YOUR_TOKEN") // Optional token
+    // Fetch coarse location (optional, fallback to Unknown)
+    const token = import.meta.env.VITE_IPINFO_TOKEN; // Set in your .env
+    const url = token
+      ? `https://ipinfo.io/json?token=${token}`
+      : `https://ipinfo.io/json`;
+
+    fetch(url)
       .then((res) => res.json())
       .then((data) => {
         const clickDetails = {
@@ -37,24 +50,29 @@ export default function LinkRedirector() {
         allLinks[shortCode] = matchedLink;
         localStorage.setItem("affordmedLinks", JSON.stringify(allLinks));
 
-        setRedirectUrl(matchedLink.originalUrl);
+        setRedirectUrl(ensureProtocol(matchedLink.originalUrl));
       })
       .catch(() => {
-        // Fallback logging without location
-        matchedLink.clickEvents = [...(matchedLink.clickEvents || []), {
+        // Fallback without location
+        const fallbackClick = {
           time: now.toISOString(),
           referrer: document.referrer || "Direct",
           location: "Unknown",
-        }];
+        };
+
+        matchedLink.clickEvents = [...(matchedLink.clickEvents || []), fallbackClick];
         allLinks[shortCode] = matchedLink;
         localStorage.setItem("affordmedLinks", JSON.stringify(allLinks));
 
-        setRedirectUrl(matchedLink.originalUrl);
+        setRedirectUrl(ensureProtocol(matchedLink.originalUrl));
       });
   }, [shortCode]);
 
   if (error) return <div style={{ padding: 20 }}>{error}</div>;
-  if (redirectUrl) return <Navigate to={redirectUrl} />;
+  if (redirectUrl) {
+    window.location.href = redirectUrl; // More reliable than <Navigate />
+    return null;
+  }
 
   return <div style={{ padding: 20 }}>Redirecting...</div>;
 }

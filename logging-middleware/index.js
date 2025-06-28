@@ -9,6 +9,8 @@
  * await log('frontend', 'error', 'component', 'Something went wrong');
  */
 
+
+
 const VALID_STACKS = ['frontend'];
 const VALID_LEVELS = ['debug', 'info', 'warn', 'error', 'fatal'];
 const VALID_PACKAGES = [
@@ -16,7 +18,7 @@ const VALID_PACKAGES = [
   'auth', 'config', 'middleware', 'utils'
 ];
 
-const LOGGING_API = 'http://20.244.56.144/eva1uation-service/logs';
+const LOGGING_API = '/api/logs'; // use Vite proxy instead of the direct URL
 const ACCESS_TOKEN = import.meta.env.VITE_ACCESS_TOKEN; // Set this in your .env file
 
 console.log(ACCESS_TOKEN)
